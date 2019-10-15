@@ -1,0 +1,18 @@
+0.7
+1.8
+100
+50
+100
+1
+1
+1
+
+
+ReadInput >> delta_1s;
+ReadInput >> delta_2p;
+ReadInput >> nblk;
+ReadInput >> nstep;
+ReadInput >> eqsteps;
+ReadInput >> x0;
+ReadInput >> y0;
+ReadInput >> z0;
