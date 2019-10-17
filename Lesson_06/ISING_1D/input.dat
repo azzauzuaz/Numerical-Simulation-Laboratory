@@ -1,0 +1,19 @@
+2
+50
+1.0
+0
+1
+50
+10000
+2000
+0
+
+  ReadInput >> temp;
+  ReadInput >> nspin;
+  ReadInput >> J;
+  ReadInput >> h;
+  ReadInput >> metro;
+  ReadInput >> nblk;
+  ReadInput >> nstep;
+  ReadInput >> eqsteps;
+  ReadInput >> loadconf;
