@@ -27,9 +27,9 @@ int main(){
       Reset(iblk);   //Reset block averages
       for(int istep=1; istep <= nstep; ++istep){
          Move();           //Move particles with Verlet algorithm
+         Measure();     //Properties measurement and update block averages
 
          if(istep%10 == 0){
-            Measure();     //Properties measurement and update block averages
             //ConfXYZ(nconf);//Write actual configuration in XYZ format //Commented to avoid "filesystem full"!
             nconf += 1;
          }
@@ -310,7 +310,6 @@ void Measure(){ //Properties measurement
 
     return;
 }
-
 
 void ConfFinal(void){ //Write final configuration
   ofstream WriteConf;
