@@ -27,9 +27,9 @@ int main(){
       Reset(iblk);   //Reset block averages
       for(int istep=1; istep <= nstep; ++istep){
          Move();           //Move particles with Verlet algorithm
-         Measure();     //Properties measurement and update block averages
 
          if(istep%10 == 0){
+            Measure();     //Properties measurement and update block averages
             //ConfXYZ(nconf);//Write actual configuration in XYZ format //Commented to avoid "filesystem full"!
             nconf += 1;
          }
@@ -249,9 +249,6 @@ void Measure(){ //Properties measurement
   w = 0.0;
   t = 0.0;
 
-//reset the hystogram of g(r)
-  for (int k=igofr; k<igofr+nbins; ++k) blk_av[k]=0.0;
-
 //cycle over pairs of particles
   for (int i=0; i<npart-1; ++i){
     for (int j=i+1; j<npart; ++j){
@@ -310,6 +307,7 @@ void Measure(){ //Properties measurement
 
     return;
 }
+
 
 void ConfFinal(void){ //Write final configuration
   ofstream WriteConf;
