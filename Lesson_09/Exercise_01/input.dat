@@ -1,0 +1,19 @@
+2000
+100
+2.
+0.1
+0.1
+0.1
+0.1
+0.1
+0.8
+
+    ReadInput >> N_GENERATIONS;
+    ReadInput >> NUMBER_OF_INDIVIDUALS;
+    ReadInput >> r;
+    ReadInput >> p_permutation;
+    ReadInput >> p_shift;
+    ReadInput >> p_partial_shift;
+    ReadInput >> p_block_permutation;
+    ReadInput >> p_inversion;
+    ReadInput >> p_crossover;
