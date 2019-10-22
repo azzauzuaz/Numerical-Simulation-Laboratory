@@ -142,7 +142,7 @@ int main (int argc, char *argv[]){
     ofstream output3("output01.3.dat");
 
     int m=100;
-    int n=1000;
+    int n=10000;
     int jmax=100;
 
     int* interval=new int[m];
@@ -150,24 +150,23 @@ int main (int argc, char *argv[]){
     double chi_avg=0;
 
     for(int j=0; j<jmax; j++){
+
         for(int i=0; i<m; i++)
             interval[i]=0;
 
-        for(int i=0; i<n; i++){
+        for(int i=0; i<n; i++)
             interval[int(rnd.Rannyu()*m)]++;
-        }
 
         double sum=0;
-        for(int i=0; i<m; i++){
+        for(int i=0; i<m; i++)
             sum+=(interval[i]-n/m)*(interval[i]-n/m);
-        }
 
         double chi=sum/(n/m);
         chi_avg+=chi;
         output3<<chi<<endl;
     }
 
-    cout<<chi_avg/m<<endl;
+    cout<<chi_avg/jmax<<endl;
 
     output3.close();
 
