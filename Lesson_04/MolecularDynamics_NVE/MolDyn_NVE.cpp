@@ -45,7 +45,6 @@ int main(){
 
 void Input(void){ //Prepare all stuff for the simulation
   ifstream ReadInput,ReadConf;
-  double ep, ek, pr, et, vir;
 
   cout << "Classic Lennard-Jones fluid        " << endl;
   cout << "Molecular dynamics simulation in NVE ensemble  " << endl << endl;
@@ -283,7 +282,7 @@ void Measure(){ //Properties measurement
     stima_kin = t/(double)npart; //Kinetic energy per particle
     stima_temp = (2.0 / 3.0) * t/(double)npart; //Temperature
     stima_etot = (t+v)/(double)npart; //Total energy per particle
-    stima_pres = rho * stima_temp + (48.0 * w / ((double)npart * 3.0 * vol)); //Pressure
+    stima_pres = rho * stima_temp + 48.0 * w / (3.0 * vol); //Pressure
 
     blk_av[iv]+=stima_pot;
     blk_av[ik]+=stima_kin;
