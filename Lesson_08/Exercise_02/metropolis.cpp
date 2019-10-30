@@ -24,42 +24,43 @@ using namespace std;
 
 int main (int argc, char *argv[]){
 
-   int seed[4];
-   int p1, p2;
-   ifstream Primes("Primes");
-   if (Primes.is_open()){
-      Primes >> p1 >> p2 ;
-   } else cerr << "PROBLEM: Unable to open Primes" << endl;
-   Primes.close();
+    int seed[4];
+    int p1, p2;
+    ifstream Primes("Primes");
+    if (Primes.is_open()){
+        Primes >> p1 >> p2 ;
+    } else cerr << "PROBLEM: Unable to open Primes" << endl;
+    Primes.close();
 
-   ifstream input("seed.in");
-   string property;
-   if (input.is_open()){
-      while ( !input.eof() ){
-         input >> property;
-         if( property == "RANDOMSEED" ){
-            input >> seed[0] >> seed[1] >> seed[2] >> seed[3];
-            rnd.SetRandom(seed,p1,p2);
-         }
-      }
-      input.close();
-   } else cerr << "PROBLEM: Unable to open seed.in" << endl;
+    ifstream input("seed.in");
+    string property;
+    if (input.is_open()){
+        while ( !input.eof() ){
+            input >> property;
+            if( property == "RANDOMSEED" ){
+                input >> seed[0] >> seed[1] >> seed[2] >> seed[3];
+                rnd.SetRandom(seed,p1,p2);
+            }
+        }
+        input.close();
+    } else cerr << "PROBLEM: Unable to open seed.in" << endl;
 
-   Input();
-   for(int iblk=1; iblk <= nblk; ++iblk) //Simulation
-   {
-     Reset();
-     for(int istep=1; istep <= nstep; ++istep)
-     {
-       Move();
-       if(istep%10 == 0) Measure();
-     }
-     Averages(iblk);
-   }
+    Input();
 
+    for(int iblk=1; iblk <= nblk; ++iblk){ //Simulation
 
-   rnd.SaveSeed();
-   return 0;
+        Reset();
+
+        for(int istep=1; istep <= nstep; ++istep){
+            Move();
+            if(istep%10 == 0) Measure();
+        }
+
+        Averages(iblk);
+    }
+
+    rnd.SaveSeed();
+    return 0;
 }
 
 void Move(){
@@ -73,12 +74,13 @@ void Move(){
     double prob_new=PDF(xnew, mu, sigma);
 
     double p = prob_new / prob_old;
-    if(p >= rnd.Rannyu())
-    {
-    //Update
-       x = xnew;
-       accepted++;
+
+    if(p >= rnd.Rannyu()){
+        //Update
+        x = xnew;
+        accepted++;
     }
+
     attempted++;
 }
 

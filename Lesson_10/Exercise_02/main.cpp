@@ -192,7 +192,7 @@ double GetDistance2(vector<int> Path, vector<City> CityList){
 }
 
 void PrintDistances(vector<int> Path, vector<City> CityList, int i){
-    //MPI_Barrier(MPI_COMM_WORLD);
+
     ofstream dist;
 
     dist.open("output_distance"+to_string(Rank)+".dat",ios::app);
@@ -210,7 +210,6 @@ void PrintDistances(vector<int> Path, vector<City> CityList, int i){
 }
 
 void PrintBestPath(vector<int> Path, vector<City> CityList){
-    //MPI_Barrier(MPI_COMM_WORLD);
 
     double dist=GetDistance(Path, CityList);
     double *dist_vec=new double[size];

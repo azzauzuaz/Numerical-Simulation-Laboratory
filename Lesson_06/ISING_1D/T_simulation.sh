@@ -3,16 +3,27 @@
 echo "Script to run simulation as a function of T"
 echo "Removing old files..."
 
-rm ene.dat
-rm mag.dat
-rm heat.dat
-rm chi.dat
+if [ -f ene.dat ]; then
+    rm ene.dat
+fi
+
+if [ -f mag.dat ]; then
+    rm mag.dat
+fi
+
+if [ -f heat.dat ]; then
+    rm heat.dat
+fi
+
+if [ -f chi.dat ]; then
+    rm chi.dat
+fi
 
 TEMPS=($(seq 0.5 0.05 2.05))
 
 for temp in "${TEMPS[@]}"
 do
-    echo "Simulating T=$temp K ..."
+    echo "Simulating T=$temp..."
     gsed -i "1s/.*/$temp/g" input.dat  #gsed for macos, on gnu use 'sed'
     ./clean.sh
     ./Monte_Carlo_ISING_1D.exe > /dev/null

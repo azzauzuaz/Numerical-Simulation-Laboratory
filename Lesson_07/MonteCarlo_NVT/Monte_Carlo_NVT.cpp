@@ -17,21 +17,25 @@ _/    _/  _/_/_/  _/_/_/_/ email: Davide.Galli@unimi.it
 
 using namespace std;
 
-int main()
-{
+int main(){
+
     Input(); //Inizialization
     int nconf = 1;
+
     cout<<"Equilibration..."<<endl;
     for(int i=0; i<neq; ++i)
         Move();
-    for(int iblk=1; iblk <= nblk; ++iblk) //Simulation
-    {
+
+    for(int iblk=1; iblk <= nblk; ++iblk){ //Simulation
+
         Reset(iblk);   //Reset block averages
-        for(int istep=1; istep <= nstep; ++istep)
-        {
+
+        for(int istep=1; istep <= nstep; ++istep){
+
             Move();
             Measure();
             Accumulate(); //Update block averages
+
             if(istep%10 == 0){
                 //ConfXYZ(nconf);//Write actual configuration in XYZ format //Commented to avoid "filesystem full"!
                 nconf += 1;
@@ -45,8 +49,8 @@ int main()
 }
 
 
-void Input(void)
-{
+void Input(void){
+
     ifstream ReadInput,ReadConf;
 
     cout << "Classic Lennard-Jones fluid        " << endl;
@@ -55,7 +59,7 @@ void Input(void)
     cout << "Boltzmann weight exp(- beta * sum_{i<j} v(r_ij) ), beta = 1/T " << endl << endl;
     cout << "The program uses Lennard-Jones units " << endl;
 
-//Read seed for random numbers
+    //Read seed for random numbers
     int p1, p2;
     ifstream Primes("Primes");
     Primes >> p1 >> p2 ;
@@ -66,7 +70,7 @@ void Input(void)
     rnd.SetRandom(seed,p1,p2);
     input.close();
 
-//Read input informations
+    //Read input informations
     ReadInput.open("input.dat");
 
     ReadInput >> temp;
@@ -108,19 +112,19 @@ void Input(void)
     ReadInput.close();
 
 
-//Prepare arrays for measurements
+    //Prepare arrays for measurements
     iv = 0; //Potential energy
     iw = 1; //Virial
 
     n_props = 2; //Number of observables
 
-//measurement of g(r)
+    //measurement of g(r)
     igofr = 2;
     nbins = 100;
     n_props = n_props + nbins;
     bin_size = (box/(2.0*(double)nbins));
 
-//Read initial configuration
+    //Read initial configuration
     cout << "Read initial configuration from file config.0 " << endl << endl;
     ReadConf.open("config.0");
     for (int i=0; i<npart; ++i)
@@ -132,25 +136,25 @@ void Input(void)
     }
     ReadConf.close();
 
-//Evaluate potential energy and virial of the initial configuration
+    //Evaluate potential energy and virial of the initial configuration
     Measure();
 
-//Print initial values for the potential energy and virial
+    //Print initial values for the potential energy and virial
     cout << "Initial potential energy (with tail corrections) = " << walker[iv]/(double)npart + vtail << endl;
     cout << "Virial                   (with tail corrections) = " << walker[iw]/(double)npart + ptail << endl;
     cout << "Pressure                 (with tail corrections) = " << rho * temp + (walker[iw] + (double)npart * ptail) / vol << endl << endl;
 }
 
 
-void Move(void)
-{
+void Move(void){
+
     int o;
     double p, energy_old, energy_new;
     double xold, yold, zold, xnew, ynew, znew;
 
 
-    for(int i=0; i<npart; ++i)
-    {
+    for(int i=0; i<npart; ++i){
+
         //Select randomly a particle (for C++ syntax, 0 <= o <= npart-1)
         o = (int)(rnd.Rannyu()*npart);
 
@@ -170,8 +174,8 @@ void Move(void)
 
         //Metropolis test
         p = exp(beta*(energy_old-energy_new));
-        if(p >= rnd.Rannyu())
-        {
+        if(p >= rnd.Rannyu()){
+
             //Update
             x[o] = xnew;
             y[o] = ynew;
@@ -183,15 +187,15 @@ void Move(void)
     }
 }
 
-double Boltzmann(double xx, double yy, double zz, int ip)
-{
+double Boltzmann(double xx, double yy, double zz, int ip){
+
     double ene=0.0;
     double dx, dy, dz, dr;
 
-    for (int i=0; i<npart; ++i)
-    {
-        if(i != ip)
-        {
+    for (int i=0; i<npart; ++i){
+
+        if(i != ip){
+
             // distance ip-i in pbc
             dx = Pbc(xx - x[i]);
             dy = Pbc(yy - y[i]);
@@ -201,7 +205,6 @@ double Boltzmann(double xx, double yy, double zz, int ip)
             dr = sqrt(dr);
 
             if(dr < rcut)
-            {
                 ene += 1.0/pow(dr,12) - 1.0/pow(dr,6);
             }
         }
@@ -210,23 +213,21 @@ double Boltzmann(double xx, double yy, double zz, int ip)
     return 4.0*ene;
 }
 
-void Measure()
-{
+void Measure(){
+
     int bin;
     double v = 0.0, w = 0.0;
     double vij, wij;
     double dx, dy, dz, dr;
 
-//reset the hystogram of g(r)
+    //reset the hystogram of g(r)
     for (int k=igofr; k<igofr+nbins; ++k) walker[k]=0.0;
 
-//cycle over pairs of particles
-    for (int i=0; i<npart-1; ++i)
-    {
-        for (int j=i+1; j<npart; ++j)
-        {
+    //cycle over pairs of particles
+    for (int i=0; i<npart-1; ++i){
+        for (int j=i+1; j<npart; ++j){
 
-// distance i-j in pbc
+            // distance i-j in pbc
             dx = Pbc(x[i] - x[j]);
             dy = Pbc(y[i] - y[j]);
             dz = Pbc(z[i] - z[j]);
@@ -239,8 +240,8 @@ void Measure()
             if(bin < igofr + nbins)
                 walker[bin] += 1.0;
 
-            if(dr < rcut)
-            {
+            if(dr < rcut){
+
                 vij = 1.0/pow(dr,12) - 1.0/pow(dr,6);
                 wij = 1.0/pow(dr,12) - 0.5/pow(dr,6);
 
@@ -257,41 +258,34 @@ void Measure()
 }
 
 
-void Reset(int iblk) //Reset block averages
-{
+void Reset(int iblk){ //Reset block averages
 
-    if(iblk == 1)
-    {
-        for(int i=0; i<n_props; ++i)
-        {
+    if(iblk == 1){
+        for(int i=0; i<n_props; ++i){
             glob_av[i] = 0;
             glob_av2[i] = 0;
         }
     }
 
     for(int i=0; i<n_props; ++i)
-    {
         blk_av[i] = 0;
-    }
+
     blk_norm = 0;
     attempted = 0;
     accepted = 0;
 }
 
 
-void Accumulate(void) //Update block averages
-{
+void Accumulate(void){ //Update block averages
 
     for(int i=0; i<n_props; ++i)
-    {
         blk_av[i] = blk_av[i] + walker[i];
-    }
+
     blk_norm = blk_norm + 1.0;
 }
 
 
-void Averages(int iblk) //Print results for current block
-{
+void Averages(int iblk){ //Print results for current block
 
     double r, gdir;
     ofstream Gofr, Gave, Epot, Pres;
@@ -315,12 +309,12 @@ void Averages(int iblk) //Print results for current block
     glob_av2[iw] += stima_pres*stima_pres;
     err_press=Error(glob_av[iw],glob_av2[iw],iblk);
 
-//Potential energy per particle
+    //Potential energy per particle
     Epot << setw(wd) << iblk <<  setw(wd) << stima_pot << setw(wd) << glob_av[iv]/(double)iblk << setw(wd) << err_pot << endl;
-//Pressure
+    //Pressure
     Pres << setw(wd) << iblk <<  setw(wd) << stima_pres << setw(wd) << glob_av[iw]/(double)iblk << setw(wd) << err_press << endl;
 
-//g(r)
+    //g(r)
     for (int i=igofr; i<nbins+igofr; i++){
 
         r = (i-igofr) * bin_size;
@@ -343,14 +337,12 @@ void Averages(int iblk) //Print results for current block
 }
 
 
-void ConfFinal(void)
-{
+void ConfFinal(void){
     ofstream WriteConf, WriteSeed;
 
     cout << "Print final configuration to file config.final " << endl << endl;
     WriteConf.open("config.final");
-    for (int i=0; i<npart; ++i)
-    {
+    for (int i=0; i<npart; ++i){
         WriteConf << x[i]/box << "   " <<  y[i]/box << "   " << z[i]/box << endl;
     }
     WriteConf.close();
@@ -370,13 +362,11 @@ void ConfXYZ(int nconf){ //Write configuration in .xyz format
     WriteXYZ.close();
 }
 
-double Pbc(double r)  //Algorithm for periodic boundary conditions with side L=box
-{
+double Pbc(double r){  //Algorithm for periodic boundary conditions with side L=box
     return r - box * rint(r/box);
 }
 
-double Error(double sum, double sum2, int iblk)
-{
+double Error(double sum, double sum2, int iblk){
     return sqrt((sum2/(double)iblk - pow(sum/(double)iblk,2))/(double)iblk);
 }
 

@@ -19,50 +19,48 @@ using namespace std;
 
 int main (int argc, char *argv[]){
 
-   int seed[4];
-   int p1, p2;
-   ifstream Primes("Primes");
-   if (Primes.is_open()){
+    int seed[4];
+    int p1, p2;
+    ifstream Primes("Primes");
+    if (Primes.is_open()){
       Primes >> p1 >> p2 ;
-   } else cerr << "PROBLEM: Unable to open Primes" << endl;
-   Primes.close();
+    } else cerr << "PROBLEM: Unable to open Primes" << endl;
+    Primes.close();
 
-   ifstream input("seed.in");
-   string property;
-   if (input.is_open()){
-      while ( !input.eof() ){
-         input >> property;
-         if( property == "RANDOMSEED" ){
-            input >> seed[0] >> seed[1] >> seed[2] >> seed[3];
-            rnd.SetRandom(seed,p1,p2);
-         }
-      }
-      input.close();
-   } else cerr << "PROBLEM: Unable to open seed.in" << endl;
+    ifstream input("seed.in");
+    string property;
+    if (input.is_open()){
+        while ( !input.eof() ){
+            input >> property;
+            if( property == "RANDOMSEED" ){
+                input >> seed[0] >> seed[1] >> seed[2] >> seed[3];
+                rnd.SetRandom(seed,p1,p2);
+            }
+        }
+        input.close();
+    } else cerr << "PROBLEM: Unable to open seed.in" << endl;
 
-   Input();
-   cout<<"Equilibration..."<<endl<<endl;
-   for(int i=0; i < eqsteps; ++i)
-     Move();
+    Input();
+    cout<<"Equilibration..."<<endl<<endl;
+    for(int i=0; i < eqsteps; ++i)
+        Move();
 
-   for(int iblk=1; iblk <= nblk; ++iblk) //Simulation
-   {
-     Reset();
-     for(int istep=1; istep <= nstep; ++istep)
-     {
-       Move();
-       Measure();
-     }
-     Averages(iblk);
-   }
+    for(int iblk=1; iblk <= nblk; ++iblk){ //Simulation
+        Reset();
+        for(int istep=1; istep <= nstep; ++istep){
+            Move();
+            Measure();
+        }
+        Averages(iblk);
+    }
 
-
-   rnd.SaveSeed();
-   return 0;
+    rnd.SaveSeed();
+    return 0;
 }
 
 void Move(){
-// 1s move
+
+    // 1s move
     xold = x_1s;
     yold = y_1s;
     zold = z_1s;
@@ -80,19 +78,17 @@ void Move(){
     double prob_new=PDF_1s(xnew,ynew,znew);
 
     double p = prob_new / prob_old;
-    if(p >= rnd.Rannyu())
-    {
-    //Update
-       x_1s = xnew;
-       y_1s = ynew;
-       z_1s = znew;
+    if(p >= rnd.Rannyu()){
+        //Update
+        x_1s = xnew;
+        y_1s = ynew;
+        z_1s = znew;
 
-       accepted_1s++;
+        accepted_1s++;
     }
     attempted_1s++;
 
-//2p move
-
+    //2p move
     xold = x_2p;
     yold = y_2p;
     zold = z_2p;
@@ -111,12 +107,12 @@ void Move(){
 
     p = prob_new / prob_old;
     if(p >= rnd.Rannyu()){
-    //Update
-       x_2p = xnew;
-       y_2p = ynew;
-       z_2p = znew;
+        //Update
+        x_2p = xnew;
+        y_2p = ynew;
+        z_2p = znew;
 
-       accepted_2p++;
+        accepted_2p++;
     }
     attempted_2p++;
 
@@ -236,7 +232,9 @@ double PDF_1s(double x, double y, double z){
 double PDF_2p(double x, double y, double z){
     double r=sqrt( x*x + y*y + z*z );
     double theta=acos(z/r);
-    if(r==0) theta=0;
+    if(r==0)
+        theta=0;
+        
     return pow(a0, -5) / (32*M_PI) * r*r * exp(-r/a0)*pow( cos(theta), 2 );
 }
 
